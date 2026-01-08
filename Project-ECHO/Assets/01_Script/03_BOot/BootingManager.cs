@@ -1,16 +1,17 @@
-using UnityEngine;
+//using UnityEngine;
+//using UnityEngine.SceneManagement;
 
-public class BootingManager : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        SceneManager.LoadScene("Lobby");
-    }
+//public class BootingManager : MonoBehaviour
+//{
+//    // Start is called once before the first execution of Update after the MonoBehaviour is created
+//    void Start()
+//    {
+//        SceneManager.LoadScene("Lobby");
+//    }
 
-    // Update is called once per frame
-    void Update()
-    {
+//    // Update is called once per frame
+//    void Update()
+//    {
         
-    }
-}
+//    }
+//}

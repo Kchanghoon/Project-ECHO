@@ -22,7 +22,7 @@ public class LobbyManager : MonoBehaviour
         {
             Debug.Log("호스트 시작 성공");
             // 2. 호스트가 Game 씬으로 전환 (연결된 클라이언트들도 함께 이동함)
-            NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+            NetworkManager.Singleton.SceneManager.LoadScene("03_Combat", LoadSceneMode.Single);
         }
     }
 
