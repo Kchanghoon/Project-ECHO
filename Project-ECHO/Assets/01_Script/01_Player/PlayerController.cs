@@ -32,7 +32,6 @@ public class PlayerController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // 옛날 방식인 Input.GetAxis 대신 Keyboard 클래스 사용
         Vector2 inputVector = Vector2.zero;
         if (Keyboard.current != null)
         {
@@ -42,24 +41,19 @@ public class PlayerController : NetworkBehaviour
             if (Keyboard.current.dKey.isPressed) inputVector.x += 1;
         }
 
-        Vector3 direction = new Vector3(inputVector.x, 0, inputVector.y).normalized;
+        // [수정] 카메라(몸체)가 바라보는 방향을 기준으로 이동 방향 계산
+        Vector3 moveDir = (transform.forward * inputVector.y + transform.right * inputVector.x).normalized;
 
-        if (direction.magnitude >= 0.1f)
+        if (moveDir.magnitude >= 0.1f)
         {
-            // 3. 달리기 여부 확인 (Shift 키)
             bool isRunning = Keyboard.current.leftShiftKey.isPressed;
             float currentSpeed = isRunning ? runSpeed : walkSpeed;
 
-            // 4. 캐릭터 회전 (진행 방향을 바라보게)
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref rotationSpeed, 0.1f);
-            transform.rotation = Quaternion.Euler(0, angle, 0);
+            // [중요] 캐릭터 회전 로직(Mathf.Atan2 부분)을 삭제합니다. 
+            // 이제 회전은 CameraController가 담당합니다.
 
-            // 5. 실제 이동 처리
-            Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
             controller.Move(moveDir * currentSpeed * Time.deltaTime);
 
-            // 6. 소음 발생 로직 (달리기 중일 때만)
             if (isRunning)
             {
                 HandleNoiseReporting();
