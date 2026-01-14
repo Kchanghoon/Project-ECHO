@@ -1,21 +1,31 @@
-using DG.Tweening.Core.Easing;
-using Unity.Netcode;
+using Photon.Pun;
 using UnityEngine;
 
-public class Coin : NetworkBehaviour
+public class Coin : MonoBehaviourPun
 {
+    [SerializeField] private float rotationSpeed = 100f;
+
+    private void Update()
+    {
+        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        // 서버에서만 충돌을 판정하고 처리합니다.
-        if (!IsServer) return;
+        // 마스터 클라이언트(호스트)에서만 처리
+        if (!PhotonNetwork.IsMasterClient) return;
 
         if (other.CompareTag("Player"))
         {
-            // 게임 매니저에게 코인 획득을 알림
-            GameManager.Instance.CollectCoin();
+            Debug.Log("플레이어가 코인을 획득했습니다!");
 
-            // 네트워크상에서 코인 파괴
-            GetComponent<NetworkObject>().Despawn();
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.CollectCoin();
+            }
+
+            // 모든 클라이언트에서 코인 제거
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 }

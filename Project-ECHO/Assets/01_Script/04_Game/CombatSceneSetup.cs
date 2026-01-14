@@ -1,99 +1,41 @@
-using Unity.Netcode;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using System.Collections;
 
-public class CombatSceneSetup : MonoBehaviour
+public class CombatSceneSetup : MonoBehaviourPunCallbacks
 {
+    public static CombatSceneSetup Instance;
+
     [SerializeField] private Transform[] playerSpawnPoints;
-    private int spawnIndex = 0;
 
-    private void Start()
+    private int nextSpawnIndex = 0;
+
+    private void Awake()
     {
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback += OnPlayerConnected;
-            StartCoroutine(SetupExistingPlayers());
-        }
+        Instance = this;
     }
 
-    private IEnumerator SetupExistingPlayers()
+    public int AllocateSpawnIndex()
     {
-        yield return new WaitForSeconds(0.5f);
-
-        // [수정] FindObjectsByType 사용 (Unity 2023.2 이상)
-        NetworkObject[] networkObjects = Object.FindObjectsByType<NetworkObject>(FindObjectsSortMode.None);
-
-        foreach (var networkObject in networkObjects)
+        if (playerSpawnPoints == null || playerSpawnPoints.Length == 0)
         {
-            if (networkObject.CompareTag("Player"))
-            {
-                SetPlayerPosition(networkObject);
-            }
+            Debug.LogError("[CombatSceneSetup] 스폰 포인트가 설정되지 않았습니다!");
+            return 0;
         }
+
+        int idx = nextSpawnIndex % playerSpawnPoints.Length;
+        nextSpawnIndex++;
+        return idx;
     }
 
-    private void OnPlayerConnected(ulong clientId)
+    public Transform GetSpawnPoint(int index)
     {
-        StartCoroutine(WaitForPlayerObject(clientId));
+        if (playerSpawnPoints == null || playerSpawnPoints.Length == 0) return null;
+        return playerSpawnPoints[index % playerSpawnPoints.Length];
     }
 
-    private IEnumerator WaitForPlayerObject(ulong clientId)
+    public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        float timeout = 5f;
-        float elapsed = 0f;
-
-        while (elapsed < timeout)
-        {
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
-            {
-                if (client.PlayerObject != null)
-                {
-                    SetPlayerPosition(client.PlayerObject);
-                    yield break;
-                }
-            }
-
-            elapsed += 0.1f;
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        Debug.LogWarning($"플레이어 {clientId}의 PlayerObject를 찾을 수 없습니다 (타임아웃)");
-    }
-
-    private void SetPlayerPosition(NetworkObject playerObject)
-    {
-        if (playerSpawnPoints.Length == 0)
-        {
-            Debug.LogError("스폰 포인트가 설정되지 않았습니다!");
-            return;
-        }
-
-        Transform spawnPoint = playerSpawnPoints[spawnIndex % playerSpawnPoints.Length];
-
-        // CharacterController 처리
-        CharacterController cc = playerObject.GetComponent<CharacterController>();
-        if (cc != null)
-        {
-            cc.enabled = false;
-        }
-
-        playerObject.transform.position = spawnPoint.position;
-        playerObject.transform.rotation = spawnPoint.rotation;
-
-        if (cc != null)
-        {
-            cc.enabled = true;
-        }
-
-        spawnIndex++;
-        Debug.Log($"[Server] 플레이어를 스폰 포인트 {spawnIndex - 1}에 배치: {spawnPoint.position}");
-    }
-
-    private void OnDestroy()
-    {
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback -= OnPlayerConnected;
-        }
+        Debug.Log($"플레이어 {newPlayer.NickName} 입장!");
     }
 }

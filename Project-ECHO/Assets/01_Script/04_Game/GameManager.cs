@@ -1,19 +1,28 @@
-using Unity.Netcode;
+using Photon.Pun;
 using UnityEngine;
-using TMPro;
 
-public class GameManager : NetworkBehaviour
+public class GameManager : MonoBehaviourPun
 {
     public static GameManager Instance;
-    public TextMeshProUGUI coinText;
 
-    public NetworkVariable<int> TotalCoinsCollected = new NetworkVariable<int>(0);
+    private int totalCoinsCollected = 0;
+
+    public int TotalCoinsCollected
+    {
+        get => totalCoinsCollected;
+        private set
+        {
+            totalCoinsCollected = value;
+            // UI 업데이트 등
+        }
+    }
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -21,15 +30,16 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    [PunRPC]
+    public void CollectCoinRPC()
+    {
+        TotalCoinsCollected++;
+        Debug.Log($"현재 수집된 코인: {TotalCoinsCollected}");
+    }
+
     public void CollectCoin()
     {
-        if (!IsServer) return;
-        TotalCoinsCollected.Value++;
-    }
-    private void Start()
-    {
-        TotalCoinsCollected.OnValueChanged += (prev, next) => {
-            coinText.text = $"Coins: {next}";
-        };
+        // 모든 클라이언트에게 알림
+        photonView.RPC("CollectCoinRPC", RpcTarget.All);
     }
 }

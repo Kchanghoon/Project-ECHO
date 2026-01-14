@@ -2072,6 +2072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a231f3ce414f104988c85a667e2834c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NoiseManager
+  noiseRadius: 15
   hunterAI: {fileID: 0}
 --- !u!4 &519059626
 Transform:
@@ -2628,6 +2629,7 @@ GameObject:
   m_Component:
   - component: {fileID: 792245407}
   - component: {fileID: 792245406}
+  - component: {fileID: 792245408}
   m_Layer: 0
   m_Name: CombatSceneSetup
   m_TagString: Untagged
@@ -2667,6 +2669,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &792245408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 792245404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f52101e7ddf018f47893e1d965633794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawner
+  playerPrefabPath: PhotonPrefabs/Character
 --- !u!1001 &803152280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6198,8 +6213,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1772918703}
-  - component: {fileID: 1772918702}
   - component: {fileID: 1772918704}
+  - component: {fileID: 1772918705}
+  - component: {fileID: 1772918706}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -6207,31 +6223,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1772918702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1772918701}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 201034501
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!4 &1772918703
 Transform:
   m_ObjectHideFlags: 0
@@ -6259,10 +6250,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca63456d3206d8489f994a1675ccf31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  ShowTopMostFoldoutHeaderGroup: 1
-  coinText: {fileID: 1129800714}
-  TotalCoinsCollected:
-    m_InternalValue: 0
+--- !u!114 &1772918705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772918701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef02105942e435847af87eabbbc8932a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawnReceiver
+--- !u!114 &1772918706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772918701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1001 &1775140709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6482,8 +6503,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 371eaf66acf1d574db6f8f031696ac48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  ShowTopMostFoldoutHeaderGroup: 1
-  hunterPrefab: {fileID: 2547632407910942000, guid: 25ebd9f0e47dfa240ae601d464edff3b, type: 3}
+  hunterPrefabPath: PhotonPrefabs/BlindHunter
+  spawnPosition: {x: 5, y: 0, z: 5}
 --- !u!4 &1885989971
 Transform:
   m_ObjectHideFlags: 0
@@ -7267,9 +7288,8 @@ GameObject:
   - component: {fileID: 2136005861}
   - component: {fileID: 2136005860}
   - component: {fileID: 2136005859}
-  - component: {fileID: 2136005858}
-  - component: {fileID: 2136005864}
   - component: {fileID: 2136005863}
+  - component: {fileID: 2136005864}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Untagged
@@ -7277,31 +7297,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2136005858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136005857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3787640930
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!135 &2136005859
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -7407,7 +7402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1388f7c0d481814fa875ac5cebdf025, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Coin
-  ShowTopMostFoldoutHeaderGroup: 1
+  rotationSpeed: 100
 --- !u!114 &2136005864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7417,52 +7412,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 2136005857}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetworkTransformExpanded: 0
-  AutoOwnerAuthorityTickOffset: 1
-  PositionInterpolationType: 0
-  RotationInterpolationType: 0
-  ScaleInterpolationType: 0
-  PositionLerpSmoothing: 1
-  PositionMaxInterpolationTime: 0.1
-  RotationLerpSmoothing: 1
-  RotationMaxInterpolationTime: 0.1
-  ScaleLerpSmoothing: 1
-  ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
-  TickSyncChildren: 0
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  SwitchTransformSpaceWhenParented: 0
-  Interpolate: 1
-  SlerpPosition: 0
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 838400652}
   - {fileID: 1047262084}
-  - {fileID: 1885989971}
   - {fileID: 2136005862}
   - {fileID: 1963269568}
+  - {fileID: 1885989971}
   - {fileID: 792245407}
   - {fileID: 519059626}
   - {fileID: 1772918703}

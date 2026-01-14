@@ -1,25 +1,71 @@
-using Unity.Netcode;
+using Photon.Pun;
 using UnityEngine;
 
-public class EnemySpawner : NetworkBehaviour
+public class EnemySpawner : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private GameObject hunterPrefab;
+    [SerializeField] private string hunterPrefabPath = "PhotonPrefabs/BlindHunter";
+    [SerializeField] private Vector3 spawnPosition = new Vector3(5, 0, 5);
 
-    // 호스트(서버)가 씬에 들어왔을 때 실행됨
-    public override void OnNetworkSpawn()
+    private void Start()
     {
-        if (!IsServer) return; // 서버가 아니면 실행 안 함
+        if (PhotonNetwork.IsMasterClient)
+        {
+            SpawnHunter();
+        }
+    }
 
-        // 서버에서 Hunter 생성
-        GameObject hunterInstance = Instantiate(hunterPrefab, new Vector3(5, 0, 5), Quaternion.identity);
+    private void SpawnHunter()
+    {
+        Debug.Log("[EnemySpawner] Hunter 스폰 시작");
 
-        // 생성된 오브젝트를 네트워크상에 스폰 (이걸 해야 클라들에게도 보임)
-        hunterInstance.GetComponent<NetworkObject>().Spawn();
+        GameObject hunterInstance = PhotonNetwork.Instantiate(
+            hunterPrefabPath,
+            spawnPosition,
+            Quaternion.identity
+        );
 
-        // NoiseManager에 소환된 헌터 연결
+        Debug.Log($"[EnemySpawner] Hunter 생성 완료: {hunterInstance.name}");
+
         if (NoiseManager.Instance != null)
         {
-            NoiseManager.Instance.hunterAI = hunterInstance.GetComponent<AIController>();
+            AIController hunterAI = hunterInstance.GetComponent<AIController>();
+            if (hunterAI != null)
+            {
+                NoiseManager.Instance.hunterAI = hunterAI;
+                Debug.Log("[EnemySpawner] NoiseManager에 Hunter 연결 완료");
+            }
+            else
+            {
+                Debug.LogError("[EnemySpawner] Hunter에 AIController가 없습니다!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[EnemySpawner] NoiseManager.Instance가 null입니다!");
+        }
+    }
+
+    public override void OnJoinedRoom()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            SpawnHunter();
+        }
+    }
+
+    public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
+    {
+        Debug.Log($"[EnemySpawner] 마스터 클라이언트 변경: {newMasterClient.NickName}");
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // [수정] FindFirstObjectByType 사용
+            AIController existingHunter = FindFirstObjectByType<AIController>();
+            if (existingHunter == null)
+            {
+                Debug.Log("[EnemySpawner] Hunter가 없어서 재생성");
+                SpawnHunter();
+            }
         }
     }
 }
