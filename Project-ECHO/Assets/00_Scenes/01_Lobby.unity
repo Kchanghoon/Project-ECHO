@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   ShowTopMostFoldoutHeaderGroup: 1
-  hunterPrefab: {fileID: 600474717481914481, guid: d11321f5f7cfd5846b0bf92943c4971e, type: 3}
+  hunterPrefab: {fileID: 2547632407910942000, guid: 25ebd9f0e47dfa240ae601d464edff3b, type: 3}
 --- !u!4 &287279743
 Transform:
   m_ObjectHideFlags: 0

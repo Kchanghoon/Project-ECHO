@@ -14,7 +14,7 @@ public class PlayerController : NetworkBehaviour
     private float lastNoiseTime;
 
     private CharacterController controller; // 유니티의 물리 이동 컴포넌트
-
+    private float verticalVelocity; // 클래스 상단 변수 선언
 
     void Start()
     {
@@ -40,6 +40,14 @@ public class PlayerController : NetworkBehaviour
             if (Keyboard.current.aKey.isPressed) inputVector.x -= 1;
             if (Keyboard.current.dKey.isPressed) inputVector.x += 1;
         }
+        if (controller.isGrounded)
+        {
+            verticalVelocity = -0.5f; // 바닥에 붙어있도록 살짝 누름
+        }
+        else
+        {
+            verticalVelocity += Physics.gravity.y * Time.deltaTime;
+        }
 
         // [수정] 카메라(몸체)가 바라보는 방향을 기준으로 이동 방향 계산
         Vector3 moveDir = (transform.forward * inputVector.y + transform.right * inputVector.x).normalized;
@@ -59,6 +67,12 @@ public class PlayerController : NetworkBehaviour
                 HandleNoiseReporting();
             }
         }
+
+        // 이동 벡터 계산 (기존 moveDir에 중력 적용)
+        //Vector3 finalMove = moveDir * currentSpeed;
+        //finalMove.y = verticalVelocity;
+
+        //controller.Move(finalMove * Time.deltaTime);
     }
 
     private void HandleNoiseReporting()
