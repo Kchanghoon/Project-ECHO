@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   ShowTopMostFoldoutHeaderGroup: 1
-  hunterPrefab: {fileID: 600474717481914481, guid: d11321f5f7cfd5846b0bf92943c4971e, type: 3}
+  hunterPrefab: {fileID: 8292281849598994858, guid: faabddb9d824be64f8f1d4450d9850a9, type: 3}
 --- !u!4 &287279743
 Transform:
   m_ObjectHideFlags: 0
@@ -964,7 +964,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1396713682}
-    PlayerPrefab: {fileID: 8292281849598994858, guid: faabddb9d824be64f8f1d4450d9850a9, type: 3}
+    PlayerPrefab: {fileID: 3995720064970690214, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 1a6c053ee47df044698c6c20f038016d, type: 2}
