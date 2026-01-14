@@ -1,9 +1,11 @@
 using Unity.Netcode;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance;
+    public TextMeshProUGUI coinText;
 
     public NetworkVariable<int> TotalCoinsCollected = new NetworkVariable<int>(0);
 
@@ -22,8 +24,12 @@ public class GameManager : NetworkBehaviour
     public void CollectCoin()
     {
         if (!IsServer) return;
-
         TotalCoinsCollected.Value++;
-        Debug.Log($"현재 수집된 코인: {TotalCoinsCollected.Value}");
+    }
+    private void Start()
+    {
+        TotalCoinsCollected.OnValueChanged += (prev, next) => {
+            coinText.text = $"Coins: {next}";
+        };
     }
 }
