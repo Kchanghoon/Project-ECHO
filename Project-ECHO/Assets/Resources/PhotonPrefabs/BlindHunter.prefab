@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 2547632407910942002}
   - component: {fileID: 2547632407910942001}
   - component: {fileID: 3162440772476828950}
-  - component: {fileID: -6650885384876940863}
   - component: {fileID: 7137781614333914745}
   - component: {fileID: 3630948797881223666}
+  - component: {fileID: 1410204072728967726}
   m_Layer: 0
   m_Name: BlindHunter
   m_TagString: Untagged
@@ -83,21 +83,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &-6650885384876940863
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2547632407910942000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fea73eb10544b445888aeb495c6616f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AIController
-  searchRadius: 5
-  defaultSpeed: 3.5
-  detectionRange: 10
 --- !u!114 &7137781614333914745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +102,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: -6650885384876940863}
+  - {fileID: 1410204072728967726}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -143,6 +128,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1410204072728967726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2547632407910942000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e376e0fae821f45aee0d6fd143e36d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlindHunterAI
+  defaultSpeed: 3.5
+  patrolSpeed: 2
+  chaseSpeed: 5
+  damageAmount: 20
+  patrolPoints: []
+  patrolWaitTime: 2
+  hearingRange: 15
+  roarRadius: 5
+  roarCooldown: 3
+  roarSound: {fileID: 8300000, guid: 6429ef6fc932abf48bd557105f587cfb, type: 3}
 --- !u!1001 &2547632406756309541
 PrefabInstance:
   m_ObjectHideFlags: 0
