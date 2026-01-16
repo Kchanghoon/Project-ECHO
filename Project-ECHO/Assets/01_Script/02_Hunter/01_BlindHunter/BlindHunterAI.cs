@@ -17,6 +17,18 @@ public class BlindHunterAI : AIControllerBase
     {
         Debug.Log("[BlindHunter] 초기화 완료 - 청각 기반 Hunter");
 
+        // 씬에 있는 PatrolManager를 찾아서 경로 할당
+        if (PatrolManager.Instance != null)
+        {
+            // 헌터 종류에 맞는 배열을 가져옵니다.
+            patrolPoints = PatrolManager.Instance.blindHunterPoints;
+            Debug.Log($"[BlindHunter] {patrolPoints.Length}개의 순찰 지점 할당 완료");
+        }
+        else
+        {
+            Debug.LogError("[BlindHunter] 씬에 PatrolManager가 없습니다!");
+        }
+
         // NoiseManager에 등록
         if (NoiseManager.Instance != null)
         {

@@ -144,7 +144,11 @@ MonoBehaviour:
   patrolSpeed: 2
   chaseSpeed: 5
   damageAmount: 20
-  patrolPoints: []
+  patrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   patrolWaitTime: 2
   hearingRange: 15
   roarRadius: 5
