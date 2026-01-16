@@ -50,6 +50,8 @@ MonoBehaviour:
   - OnPlayerSpottedRPC
   - OnVibrationDetectedRPC
   - PlayRoarRPC
+  - PlayRoarAnimationRPC
+  - SetPhase2RPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
