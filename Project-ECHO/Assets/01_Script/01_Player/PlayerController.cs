@@ -139,6 +139,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             finalMove.y = verticalVelocity;
             controller.Move(finalMove * Time.deltaTime);
         }
+
+
     }
 
     private void UpdateAnimations()
@@ -189,6 +191,15 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (PhotonNetwork.IsMasterClient && NoiseManager.Instance != null)
         {
             NoiseManager.Instance.ReportNoise(noisePos, 1.0f);
+        }
+    }
+    [PunRPC]
+    private void ForceNoiseRPC(Vector3 position, float intensity)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // 마스터 클라이언트에서만 NoiseManager에 보고
+            NoiseManager.Instance?.ReportNoise(position, intensity);
         }
     }
 

@@ -2073,7 +2073,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NoiseManager
   noiseRadius: 15
-  hunterAI: {fileID: 0}
 --- !u!4 &519059626
 Transform:
   m_ObjectHideFlags: 0
@@ -2954,8 +2953,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 838400649}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.06369368, y: -0.71400845, z: 0.06551255, w: 0.69414926}
+  m_LocalPosition: {x: 2.8901927, y: 2.4849353, z: 2.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6503,8 +6502,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 371eaf66acf1d574db6f8f031696ac48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
+  useSingleSpawn: 0
   hunterPrefabPath: PhotonPrefabs/BlindHunter
   spawnPosition: {x: 5, y: 0, z: 5}
+  useMultipleSpawn: 1
+  hunterSpawnList:
+  - prefabPath: PhotonPrefabs/BlindHunter
+    spawnPosition: {x: 3, y: 2, z: -2}
+  - prefabPath: PhotonPrefabs/SeeHunter
+    spawnPosition: {x: 3, y: 2, z: 4}
+  - prefabPath: PhotonPrefabs/SpiderHunter
+    spawnPosition: {x: 3, y: 2, z: 8}
+  autoSpawnOnStart: 1
 --- !u!4 &1885989971
 Transform:
   m_ObjectHideFlags: 0
