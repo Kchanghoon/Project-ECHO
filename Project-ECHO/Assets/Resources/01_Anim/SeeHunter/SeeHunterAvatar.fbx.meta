@@ -1,11 +1,53 @@
 fileFormatVersion: 2
-guid: 93090b1dd45b53843ba8adbc9e705307
+guid: e2a6184a550f7fe4eb86208f8b93ae2f
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable:
   - first:
-      74: 3548344126276651717
-    second: Whiskers |Anim_monster_scavenger_Block
+      74: 7229255052698961349
+    second: root|Anim_monster_scavenger_attack
+  - first:
+      74: 3655674631576970068
+    second: root|Anim_monster_scavenger_attack1
+  - first:
+      74: 3507859361128323604
+    second: root|Anim_monster_scavenger_Block
+  - first:
+      74: -8762759706014241384
+    second: root|Anim_monster_scavenger_Death
+  - first:
+      74: -5741060747698949940
+    second: root|Anim_monster_scavenger_Death1
+  - first:
+      74: 3222431177123244227
+    second: root|Anim_monster_scavenger_gethit
+  - first:
+      74: -1010509844761885
+    second: root|Anim_monster_scavenger_gethit1
+  - first:
+      74: -2860535252294488084
+    second: root|Anim_monster_scavenger_Idle
+  - first:
+      74: -9196361320591220913
+    second: root|Anim_monster_scavenger_Idle1
+  - first:
+      74: -331834474256019026
+    second: root|Anim_monster_scavenger_Idle2
+  - first:
+      74: -113409962780726257
+    second: root|Anim_monster_scavenger_rage
+  - first:
+      74: 921396131823731129
+    second: root|Anim_monster_scavenger_walk
+  - first:
+      74: -2671589237746631194
+    second: root|Anim_monster_scavenger_walk_back
+  - first:
+      74: -6794551060765945593
+    second: 'root|Anim_monster_scavenger_walk_left '
+  - first:
+      74: -6044226267096653398
+    second: root|Anim_monster_scavenger_walk_right
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -86,32 +128,7 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton:
-    - name: SeeHunter(Clone)
-      parentName: 
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: BODY
-      parentName: SeeHunter(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-      scale: {x: 100, y: 100, z: 100}
-    - name: TONGUE
-      parentName: SeeHunter(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-      scale: {x: 100, y: 100, z: 100}
-    - name: TEETH
-      parentName: SeeHunter(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-      scale: {x: 100, y: 100, z: 100}
-    - name: 'Whiskers '
-      parentName: SeeHunter(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-      scale: {x: 100, y: 100, z: 100}
+    skeleton: []
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -122,7 +139,7 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
