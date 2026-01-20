@@ -13,10 +13,36 @@ public class SeeHunterAI : AIControllerBase
     private Transform targetPlayer;
     private Vector3 lastSeenPosition;
     private float searchStartTime;
+    private VisionConeVisualizer visionVisualizer;
+
+    // VisionConeVisualizer에서 접근할 수 있도록
+    public LayerMask GetVisionBlockerLayer() => visionBlocker;
 
     protected override void InitializeAI()
     {
         Debug.Log("[SeeHunter] 초기화 완료 - 시각 기반 Hunter");
+
+        // 시야 범위 시각화 컴포넌트 찾기 또는 생성
+        visionVisualizer = GetComponentInChildren<VisionConeVisualizer>();
+
+        if (visionVisualizer == null)
+        {
+            // VisionCone 자식 오브젝트 생성
+            GameObject visionConeObj = new GameObject("VisionCone");
+            visionConeObj.transform.SetParent(transform);
+            visionConeObj.transform.localPosition = Vector3.up * 0.1f; // 약간 위로
+            visionConeObj.transform.localRotation = Quaternion.identity;
+
+            visionVisualizer = visionConeObj.AddComponent<VisionConeVisualizer>();
+            visionVisualizer.SetVisionParameters(visionRange, visionAngle);
+
+            Debug.Log("[SeeHunter] VisionConeVisualizer 자동 생성");
+        }
+        else
+        {
+            visionVisualizer.SetVisionParameters(visionRange, visionAngle);
+        }
+
         currentState = AIState.Patrol;
     }
 
@@ -73,6 +99,12 @@ public class SeeHunterAI : AIControllerBase
             searchStartTime = Time.time;
             MoveTo(lastSeenPosition, chaseSpeed);
 
+            // 시야 범위 색상 원래대로
+            if (visionVisualizer != null)
+            {
+                visionVisualizer.SetDetectionState(false);
+            }
+
             photonView.RPC("OnPlayerLostRPC", RpcTarget.All);
         }
     }
@@ -84,6 +116,13 @@ public class SeeHunterAI : AIControllerBase
         currentState = AIState.Chase;
 
         Debug.Log("[SeeHunter] 플레이어 발견!");
+
+        // 시야 범위 색상 변경
+        if (visionVisualizer != null)
+        {
+            visionVisualizer.SetDetectionState(true);
+        }
+
         photonView.RPC("OnPlayerSpottedRPC", RpcTarget.All, target.position);
     }
 
@@ -115,6 +154,12 @@ public class SeeHunterAI : AIControllerBase
                 Debug.Log("[SeeHunter] 플레이어 놓침 - 순찰 재개");
                 targetPlayer = null;
                 currentState = AIState.Patrol;
+
+                // 시야 범위 색상 원래대로
+                if (visionVisualizer != null)
+                {
+                    visionVisualizer.SetDetectionState(false);
+                }
             }
         }
         else
