@@ -707,6 +707,7 @@ GameObject:
   - component: {fileID: 8693745780690930675}
   - component: {fileID: -6698634256794112174}
   - component: {fileID: 3426812039467893708}
+  - component: {fileID: 7862878937145150047}
   m_Layer: 0
   m_Name: SeeHunter
   m_TagString: Untagged
@@ -743,7 +744,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3595625012628118935}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 93090b1dd45b53843ba8adbc9e705307, type: 3}
+  m_Avatar: {fileID: 9000000, guid: e2a6184a550f7fe4eb86208f8b93ae2f, type: 3}
   m_Controller: {fileID: 9100000, guid: fa25c832246dfb1438a94e1e5f2b2556, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -776,6 +777,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 310377710048917937}
+  - {fileID: 7862878937145150047}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -825,6 +827,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   searchDuration: 3
+  attackRange: 2
+  attackCooldown: 1.5
+  phase2SpeedThreshold: 7
 --- !u!33 &8693745780690930675
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -901,6 +906,36 @@ MonoBehaviour:
   normalColor: {r: 1, g: 0, b: 0, a: 0.2}
   detectedColor: {r: 1, g: 0.5, b: 0, a: 0.4}
   visionMaterial: {fileID: 2100000, guid: 40a818a044c32264dadbf2373cc4e5da, type: 2}
+--- !u!114 &7862878937145150047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3595625012628118935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonAnimatorView
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 0
+    Name: Phase2
+  - Type: 1
+    SynchronizeType: 0
+    Name: Horizontal
+  - Type: 1
+    SynchronizeType: 0
+    Name: Vertical
+  - Type: 4
+    SynchronizeType: 0
+    Name: Attack
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0
 --- !u!1 &3994217530261323971
 GameObject:
   m_ObjectHideFlags: 0
