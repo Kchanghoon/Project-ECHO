@@ -121,14 +121,13 @@ public class SeeHunterAI : AIControllerBase
         horizontal = Mathf.Clamp(horizontal, -1f, 1f);
         vertical = Mathf.Clamp(vertical, -1f, 1f);
 
-        // 애니메이터 파라미터 업데이트 (실제 파라미터 이름 확인 필요!)
-        // Animator에 "Vactical"로 되어있으면 그대로, "Vertical"이면 수정
+        // 애니메이터 파라미터 업데이트
         animator.SetFloat("Horizontal", horizontal);
-        animator.SetFloat("Vactical", vertical); // 또는 "Vertical"
+        animator.SetFloat("Vertical", vertical);  // ← 수정!
         animator.SetBool("Phase2", isPhase2);
         animator.SetBool("Attack", currentState == AIState.Attack);
 
-        // 디버그 - 매 프레임 확인
+        // 디버그
         Debug.Log($"[SeeHunter] Speed:{currentSpeed:F2}, H:{horizontal:F2}, V:{vertical:F2}, " +
                  $"State:{currentState}, AgentSpeed:{agent.speed:F2}");
     }
