@@ -2130,7 +2130,7 @@ GameObject:
   - component: {fileID: 520752770}
   - component: {fileID: 520752769}
   m_Layer: 0
-  m_Name: BlindHunter_PatrolPoints
+  m_Name: PatrolPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2154,7 +2154,12 @@ MonoBehaviour:
   - {fileID: 730456052}
   - {fileID: 314318479}
   - {fileID: 1189282139}
-  seeHunterPoints: []
+  seeHunterPoints:
+  - {fileID: 982486529}
+  - {fileID: 1681435149}
+  - {fileID: 730456052}
+  - {fileID: 314318479}
+  - {fileID: 1189282139}
   spiderHunterPoints: []
 --- !u!4 &520752770
 Transform:
@@ -3012,7 +3017,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 838400649}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &838400651
 Camera:
   m_ObjectHideFlags: 0
@@ -6723,8 +6728,6 @@ MonoBehaviour:
     spawnPosition: {x: 3, y: 2, z: -2}
   - prefabPath: PhotonPrefabs/SeeHunter
     spawnPosition: {x: 3, y: 2, z: 4}
-  - prefabPath: PhotonPrefabs/SpiderHunter
-    spawnPosition: {x: 3, y: 2, z: 8}
   autoSpawnOnStart: 1
 --- !u!4 &1885989971
 Transform:
