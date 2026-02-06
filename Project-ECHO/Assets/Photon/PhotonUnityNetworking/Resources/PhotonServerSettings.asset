@@ -53,6 +53,7 @@ MonoBehaviour:
   - PlayRoarAnimationRPC
   - SetPhase2RPC
   - PlayAttackAnimationRPC
+  - SyncFlashlightState
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
