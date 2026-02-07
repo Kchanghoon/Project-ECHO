@@ -1,7 +1,7 @@
-using Photon.Pun;
+ï»¿using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System.Collections;
 public class PlayerController : MonoBehaviourPun, IPunObservable
 {
     [Header("Movement Settings")]
@@ -26,6 +26,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private Quaternion networkRotation;
     [SerializeField] private float smoothing = 10f;
 
+    [Header("Camera Settings")]
+    [SerializeField] private float standingCameraHeight = 1.6f;
+    [SerializeField] private float crouchingCameraHeight = 0.5f;
+    [SerializeField] private float cameraTransitionSpeed = 5f;
+    private Transform cameraRoot;
+    // âœ… ì¶”ê°€: ë„¤íŠ¸ì›Œí¬ ì• ë‹ˆë©”ì´ì…˜ ë™ê¸°í™”ìš©
+    private float networkHorizontal;
+    private float networkVertical;
+    private bool networkIsCrouching;
+
     private CharacterController controller;
     private float verticalVelocity;
     private bool isCrouching = false;
@@ -34,7 +44,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
-
+        cameraRoot = transform.Find("CameraRoot");
         networkPosition = transform.position;
         networkRotation = transform.rotation;
 
@@ -45,7 +55,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         if (animator == null)
         {
-            Debug.LogError("[PlayerController] Animator ÄÄÆ÷³ÍÆ®°¡ ¾ø½À´Ï´Ù!");
+            Debug.LogError("[PlayerController] Animator ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìŠµë‹ˆë‹¤!");
         }
     }
 
@@ -53,13 +63,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine)
         {
-            // ´Ù¸¥ ÇÃ·¹ÀÌ¾î: ºÎµå·´°Ô º¸°£
+            // ë‹¤ë¥¸ í”Œë ˆì´ì–´: ë¶€ë“œëŸ½ê²Œ ë³´ê°„
             transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * smoothing);
             transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * smoothing);
+
+            // âœ… ì¶”ê°€: ì• ë‹ˆë©”ì´ì…˜ë„ ë™ê¸°í™”
+            UpdateNetworkAnimations();
             return;
         }
 
-        // ³» ÇÃ·¹ÀÌ¾î: Á¤»ó µ¿ÀÛ
+        // ë‚´ í”Œë ˆì´ì–´: ì •ìƒ ë™ì‘
         HandleInput();
         HandleMovement();
         UpdateAnimations();
@@ -67,24 +80,60 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void HandleInput()
     {
-        // ¾É±â/ÀÏ¾î¼­±â Åä±Û
+        // ì•‰ê¸°/ì¼ì–´ì„œê¸° í† ê¸€
         if (Keyboard.current.cKey.wasPressedThisFrame)
         {
             isCrouching = !isCrouching;
 
             if (isCrouching)
             {
-                // ¾É±â
-                controller.height = 1f; // Ä¸½¶ ³ôÀÌ ÁÙÀÌ±â
+                // ì•‰ê¸°
+                controller.height = 1f;
                 controller.center = new Vector3(0, 0.5f, 0);
+
+                // âœ… ì¹´ë©”ë¼ ë¶€ë“œëŸ½ê²Œ ë‚´ë¦¬ê¸°
+                StartCoroutine(SmoothCameraTransition(crouchingCameraHeight));
             }
             else
             {
-                // ÀÏ¾î¼­±â
-                controller.height = 2f; // ¿ø·¡ ³ôÀÌ·Î
+                // ì¼ì–´ì„œê¸°
+                controller.height = 2f;
                 controller.center = new Vector3(0, 1f, 0);
+
+                // âœ… ì¹´ë©”ë¼ ë¶€ë“œëŸ½ê²Œ ì˜¬ë¦¬ê¸°
+                StartCoroutine(SmoothCameraTransition(standingCameraHeight));
             }
         }
+    }
+
+    private IEnumerator SmoothCameraTransition(float targetHeight)
+    {
+        if (cameraRoot == null) yield break;
+
+        float startHeight = cameraRoot.localPosition.y;
+        float elapsed = 0f;
+        float duration = 0.2f; // 0.2ì´ˆ ë™ì•ˆ ì „í™˜
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float newHeight = Mathf.Lerp(startHeight, targetHeight, elapsed / duration);
+
+            cameraRoot.localPosition = new Vector3(
+                cameraRoot.localPosition.x,
+                newHeight,
+                cameraRoot.localPosition.z
+            );
+
+            yield return null;
+        }
+
+        // ì •í™•í•œ ë†’ì´ë¡œ ì„¤ì •
+        cameraRoot.localPosition = new Vector3(
+            cameraRoot.localPosition.x,
+            targetHeight,
+            cameraRoot.localPosition.z
+        );
     }
 
     private void HandleMovement()
@@ -93,7 +142,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (Keyboard.current != null)
         {
             if (Keyboard.current.wKey.isPressed) inputVector.y += 1;
-            if (Keyboard.current.sKey.isPressed) inputVector.y -= 1; // µÚ·Î
+            if (Keyboard.current.sKey.isPressed) inputVector.y -= 1;
             if (Keyboard.current.aKey.isPressed) inputVector.x -= 1;
             if (Keyboard.current.dKey.isPressed) inputVector.x += 1;
         }
@@ -139,8 +188,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             finalMove.y = verticalVelocity;
             controller.Move(finalMove * Time.deltaTime);
         }
-
-
     }
 
     private void UpdateAnimations()
@@ -160,13 +207,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
                          Keyboard.current.leftShiftKey.isPressed &&
                          inputVector.magnitude > 0.1f;
 
-        // ÇÙ½É: °È±â´Â 0.5, ´Ş¸®±â´Â 1.0 ¹èÀ² »ç¿ë
         float speedMultiplier = isRunning ? 1.0f : 0.5f;
 
         float targetH = inputVector.x * speedMultiplier;
         float targetV = inputVector.y * speedMultiplier;
 
-        // ºÎµå·´°Ô ÀüÈ¯
         float smoothSpeed = 10f;
         float currentH = animator.GetFloat(HorizontalHash);
         float currentV = animator.GetFloat(VerticalHash);
@@ -174,6 +219,20 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         animator.SetFloat(HorizontalHash, Mathf.Lerp(currentH, targetH, Time.deltaTime * smoothSpeed));
         animator.SetFloat(VerticalHash, Mathf.Lerp(currentV, targetV, Time.deltaTime * smoothSpeed));
         animator.SetBool(IsCrouchingHash, isCrouching);
+    }
+
+    // âœ… ì¶”ê°€: ë‹¤ë¥¸ í”Œë ˆì´ì–´ì˜ ì• ë‹ˆë©”ì´ì…˜ ì—…ë°ì´íŠ¸
+    private void UpdateNetworkAnimations()
+    {
+        if (animator == null) return;
+
+        float smoothSpeed = 10f;
+        float currentH = animator.GetFloat(HorizontalHash);
+        float currentV = animator.GetFloat(VerticalHash);
+
+        animator.SetFloat(HorizontalHash, Mathf.Lerp(currentH, networkHorizontal, Time.deltaTime * smoothSpeed));
+        animator.SetFloat(VerticalHash, Mathf.Lerp(currentV, networkVertical, Time.deltaTime * smoothSpeed));
+        animator.SetBool(IsCrouchingHash, networkIsCrouching);
     }
 
     private void HandleNoiseReporting()
@@ -193,32 +252,38 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             NoiseManager.Instance.ReportNoise(noisePos, 1.0f);
         }
     }
+
     [PunRPC]
     private void ForceNoiseRPC(Vector3 position, float intensity)
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            // ¸¶½ºÅÍ Å¬¶óÀÌ¾ğÆ®¿¡¼­¸¸ NoiseManager¿¡ º¸°í
             NoiseManager.Instance?.ReportNoise(position, intensity);
         }
     }
 
-    // Photon µ¿±âÈ­
+    // âœ… ìˆ˜ì •: ì• ë‹ˆë©”ì´ì…˜ íŒŒë¼ë¯¸í„°ë„ ì „ì†¡
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            // ³» À§Ä¡ Àü¼Û
+            // ë‚´ ìœ„ì¹˜ì™€ ì• ë‹ˆë©”ì´ì…˜ ì „ì†¡
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
+            stream.SendNext(animator.GetFloat(HorizontalHash));
+            stream.SendNext(animator.GetFloat(VerticalHash));
+            stream.SendNext(isCrouching);
         }
         else
         {
-            // ´Ù¸¥ ÇÃ·¹ÀÌ¾î À§Ä¡ ¼ö½Å
+            // ë‹¤ë¥¸ í”Œë ˆì´ì–´ ìœ„ì¹˜ì™€ ì• ë‹ˆë©”ì´ì…˜ ìˆ˜ì‹ 
             networkPosition = (Vector3)stream.ReceiveNext();
             networkRotation = (Quaternion)stream.ReceiveNext();
+            networkHorizontal = (float)stream.ReceiveNext();
+            networkVertical = (float)stream.ReceiveNext();
+            networkIsCrouching = (bool)stream.ReceiveNext();
 
-            // º¸°£À» À§ÇØ ½Ã°£ Â÷ÀÌ °è»ê
+            // ë³´ê°„ì„ ìœ„í•´ ì‹œê°„ ì°¨ì´ ê³„ì‚°
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
             networkPosition += (networkRotation * Vector3.forward) * lag;
         }
