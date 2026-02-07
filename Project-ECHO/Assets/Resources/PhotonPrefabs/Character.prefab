@@ -351,6 +351,9 @@ MonoBehaviour:
   rotationSpeed: 10
   noiseUpdateInterval: 0.2
   smoothing: 10
+  standingCameraHeight: 1.6
+  crouchingCameraHeight: 0.5
+  cameraTransitionSpeed: 5
 --- !u!114 &8661603574742121116
 MonoBehaviour:
   m_ObjectHideFlags: 0

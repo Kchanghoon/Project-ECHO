@@ -1,4 +1,4 @@
-using Photon.Pun;
+ï»¿using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,49 +9,46 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] private Button clientButton;
     [SerializeField] private Button startButton;
 
+    private void Awake()
+    {
+        hostButton.onClick.AddListener(CreateRoom);
+        clientButton.onClick.AddListener(JoinRandomRoom);
+        startButton.onClick.AddListener(OnStartRoom);
+
+        hostButton.interactable = false;
+        clientButton.interactable = false;
+        startButton.interactable = false;
+    }
+
     private void Start()
-    {    Debug.Log($"[Photon] AppIdRealtime={PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime}");
+    {
+        Debug.Log($"[Photon] AppIdRealtime={PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime}");
 
-        // Photon ¼­¹ö ¿¬°á
         PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.NickName = "Player_" + Random.Range(0, 1000); // ´Ğ³×ÀÓ ·£´ı ¼³Á¤
+        PhotonNetwork.NickName = "Player_" + Random.Range(0, 1000);
         PhotonNetwork.ConnectUsingSettings();
-
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Photon ¼­¹ö ¿¬°á ¿Ï·á");
+        Debug.Log("Photon ì„œë²„ ì—°ê²° ì™„ë£Œ");
         PhotonNetwork.JoinLobby();
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("·Îºñ ÀÔÀå ¿Ï·á");
+        Debug.Log("ë¡œë¹„ ì…ì¥ ì™„ë£Œ");
         hostButton.interactable = true;
         clientButton.interactable = true;
     }
 
-    private void Awake()
-    {
-hostButton.onClick.AddListener(CreateRoom);
-    // [¼öÁ¤] OnJoinedRoomÀÌ ¾Æ´Ï¶ó JoinRoom(¶Ç´Â PhotonNetwork.JoinRandomRoom)À» È£ÃâÇØ¾ß ÇÕ´Ï´Ù.
-    clientButton.onClick.AddListener(JoinRandomRoom); 
-    startButton.onClick.AddListener(OnStartRoom);
-
-    hostButton.interactable = false;
-    clientButton.interactable = false;
-    startButton.interactable = false;
-    }
-
-
-
     private void CreateRoom()
     {
-        hostButton.interactable = false; // Áßº¹ Å¬¸¯ ¹æÁö
+        hostButton.interactable = false;
         clientButton.interactable = false;
+
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 4; // ÃÖ´ë ÇÃ·¹ÀÌ¾î ¼ö
+        roomOptions.MaxPlayers = 4;
         roomOptions.IsVisible = true;
         roomOptions.IsOpen = true;
 
@@ -60,29 +57,25 @@ hostButton.onClick.AddListener(CreateRoom);
 
     private void JoinRandomRoom()
     {
-        Debug.Log("·£´ı ¹æ ÀÔÀå ½Ãµµ...");
-        clientButton.interactable = false; // Áßº¹ Å¬¸¯ ¹æÁö
+        Debug.Log("ëœë¤ ë°© ì…ì¥ ì‹œë„...");
+        clientButton.interactable = false;
         PhotonNetwork.JoinRandomRoom();
     }
 
     public override void OnJoinedRoom()
     {
-        // 1. CurrentRoom ÀÚÃ¼°¡ nullÀÎÁö ¸ÕÀú Ã¼Å©ÇÕ´Ï´Ù.
         if (PhotonNetwork.CurrentRoom == null)
         {
-            Debug.LogWarning("¹æ ÀÔÀå Äİ¹éÀº È£ÃâµÇ¾úÀ¸³ª, ¾ÆÁ÷ ¹æ Á¤º¸°¡ µ¿±âÈ­µÇÁö ¾Ê¾Ò½À´Ï´Ù. Àá½Ã ´ë±âÇÕ´Ï´Ù.");
+            Debug.LogWarning("ë°© ì •ë³´ê°€ ë™ê¸°í™”ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        Debug.Log($"¹æ ÀÔÀå ¼º°ø: {PhotonNetwork.CurrentRoom.Name}");
+        Debug.Log($"ë°© ì…ì¥ ì„±ê³µ: {PhotonNetwork.CurrentRoom.Name}");
 
-        // 2. ¹öÆ° ÇÒ´ç ¿©ºÎµµ ÇÔ²² Ã¼Å© (UI ¿¡·¯ ¹æÁö)
         if (startButton != null)
         {
-            // ¹æÀå¿¡°Ô¸¸ ½ÃÀÛ ¹öÆ° È°¼ºÈ­
             startButton.interactable = PhotonNetwork.IsMasterClient;
 
-            // Å¬¶óÀÌ¾ğÆ®´Â ´ë±â ¹®±¸·Î º¯°æ (¼±ÅÃ »çÇ×)
             if (!PhotonNetwork.IsMasterClient)
             {
                 var btnText = startButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
@@ -91,8 +84,7 @@ hostButton.onClick.AddListener(CreateRoom);
         }
     }
 
-    // È¤½Ã ¹æÀåÀÌ ³ª°¡¼­ ³»°¡ ¹æÀåÀÌ µÈ °æ¿ì¿¡µµ ¹öÆ°À» ÄÑÁà¾ß ÇÕ´Ï´Ù.
-    public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
+    public override void OnMasterClientSwitched(Player newMasterClient)
     {
         if (PhotonNetwork.IsMasterClient)
         {
@@ -102,26 +94,21 @@ hostButton.onClick.AddListener(CreateRoom);
 
     public void OnStartRoom()
     {
-        // ¹æÀå¸¸ È£Ãâ °¡´ÉÇÏµµ·Ï ÇÑ ¹ø ´õ Ã¼Å© (º¸¾È»ó ÁÁÀ½)
         if (PhotonNetwork.IsMasterClient)
         {
-            // Áßº¹ Å¬¸¯ ¹æÁö
             startButton.interactable = false;
-            // ´ÙÀ½ ¾ÀÀ¸·Î ¸ğµç ÇÃ·¹ÀÌ¾î¸¦ µ¥¸®°í ÀÌµ¿
             PhotonNetwork.LoadLevel("03_Combat");
         }
     }
+
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Debug.Log("·£´ı ¹æ ÀÔÀå ½ÇÆĞ - »õ·Î¿î ¹æ »ı¼º");
+        Debug.Log("ëœë¤ ë°© ì…ì¥ ì‹¤íŒ¨ - ìƒˆë¡œìš´ ë°© ìƒì„±");
         CreateRoom();
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        Debug.LogError($"¹æ »ı¼º ½ÇÆĞ: {message}");
+        Debug.LogError($"ë°© ìƒì„± ì‹¤íŒ¨: {message}");
     }
-
- 
-
 }

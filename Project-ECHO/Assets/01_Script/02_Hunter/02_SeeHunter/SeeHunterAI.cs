@@ -127,9 +127,9 @@ public class SeeHunterAI : AIControllerBase
         animator.SetBool("Phase2", isPhase2);
         animator.SetBool("Attack", currentState == AIState.Attack);
 
-        // 디버그
-        Debug.Log($"[SeeHunter] Speed:{currentSpeed:F2}, H:{horizontal:F2}, V:{vertical:F2}, " +
-                 $"State:{currentState}, AgentSpeed:{agent.speed:F2}");
+        //// 디버그
+        //Debug.Log($"[SeeHunter] Speed:{currentSpeed:F2}, H:{horizontal:F2}, V:{vertical:F2}, " +
+        //         $"State:{currentState}, AgentSpeed:{agent.speed:F2}");
     }
 
     /// <summary>
