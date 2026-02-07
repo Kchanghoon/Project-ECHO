@@ -20,13 +20,13 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -35,7 +35,7 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
-  m_ReflectionIntensity: 1
+  m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_UseRadianceAmbientProbe: 0
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 2baf4f1b2d1f10643b2e8279a03d9b22, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -5218,106 +5218,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 321761353807982743, guid: 29aa5a78b96148c42bd3f92e5e037e89, type: 3}
   m_PrefabInstance: {fileID: 1344321006}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1399921195
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3995720064970690214, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_Name
-      value: Character
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4.11132
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.00003
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 12.32648
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4339348627803264028, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5642004040603487702, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: sceneViewId
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6813804516616876497, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      propertyPath: m_RequiresDepthTextureOption
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3995720064970690214, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1399921197}
-  m_SourcePrefab: {fileID: 100100000, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
---- !u!1 &1399921196 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3995720064970690214, guid: 9142030befff8144eb53ccc1986768ce, type: 3}
-  m_PrefabInstance: {fileID: 1399921195}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1399921197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1399921196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 867d6f2385e1e024f83bbae6a174d250, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlashlightController
-  flashlight: {fileID: 0}
-  maxBatteryLife: 100
-  batteryDrainRate: 5
-  batteryRechargeRate: 10
-  lightRange: 20
-  spotAngle: 50
-  innerSpotAngle: 20
-  intensity: 3
-  lightColor: {r: 1, g: 1, b: 1, a: 1}
-  lowBatteryThreshold: 20
-  flickerSpeed: 10
-  audioSource: {fileID: 0}
-  toggleOnSound: {fileID: 0}
-  toggleOffSound: {fileID: 0}
-  lowBatterySound: {fileID: 0}
 --- !u!1001 &1406534308
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6613,10 +6513,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcaf673d581bf6547a76abc8d1ed87e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DarknessManager
-  globalVolume: {fileID: 0}
-  exposure: -3
-  vignetteIntensity: 0.5
+  exposure: -7
+  vignetteIntensity: 0.7
   vignetteSmoothness: 0.4
+  useDistanceDarkness: 1
+  darknessStartDistance: 15
+  maxDarknessDistance: 30
 --- !u!1001 &1775140709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7785,4 +7687,3 @@ SceneRoots:
   - {fileID: 252180560}
   - {fileID: 1718912480}
   - {fileID: 520752770}
-  - {fileID: 1399921195}

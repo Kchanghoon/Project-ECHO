@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 4532899760620167974}
   - component: {fileID: 4294342583110607359}
   - component: {fileID: 6813804516616876497}
+  - component: {fileID: 7501183354250025992}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: Untagged
@@ -169,6 +170,24 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &7501183354250025992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6537774439079956420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcaf673d581bf6547a76abc8d1ed87e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DarknessManager
+  exposure: -3
+  vignetteIntensity: 0.5
+  vignetteSmoothness: 0.4
+  useDistanceDarkness: 1
+  darknessStartDistance: 15
+  maxDarknessDistance: 30
 --- !u!1001 &4301729204236956663
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -300,6 +319,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1622725532475895963}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4951133490751305334}
   m_SourcePrefab: {fileID: 100100000, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
 --- !u!4 &2614513095366304342 stripped
 Transform:
@@ -482,6 +504,33 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
+--- !u!114 &4951133490751305334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3995720064970690214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 867d6f2385e1e024f83bbae6a174d250, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlashlightController
+  flashlight: {fileID: 0}
+  maxBatteryLife: 100
+  batteryDrainRate: 5
+  batteryRechargeRate: 10
+  lightRange: 30
+  spotAngle: 100
+  innerSpotAngle: 50
+  intensity: 40
+  lightColor: {r: 1, g: 1, b: 1, a: 1}
+  lowBatteryThreshold: 20
+  flickerSpeed: 10
+  audioSource: {fileID: 0}
+  toggleOnSound: {fileID: 0}
+  toggleOffSound: {fileID: 0}
+  lowBatterySound: {fileID: 0}
 --- !u!4 &4339348627803264028 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}

@@ -826,7 +826,7 @@ MonoBehaviour:
   visionBlocker:
     serializedVersion: 2
     m_Bits: 0
-  searchDuration: 3
+  searchDuration: 5
   attackRange: 2
   attackCooldown: 1.5
   phase2SpeedThreshold: 7
@@ -903,8 +903,8 @@ MonoBehaviour:
   visionAngle: 60
   resolution: 30
   height: 0.2
-  normalColor: {r: 1, g: 0, b: 0, a: 0.2}
-  detectedColor: {r: 1, g: 0.5, b: 0, a: 0.4}
+  normalColor: {r: 1, g: 0.5518868, b: 0.5518868, a: 0.21176471}
+  detectedColor: {r: 1, g: 0, b: 0, a: 1}
   visionMaterial: {fileID: 2100000, guid: 40a818a044c32264dadbf2373cc4e5da, type: 2}
 --- !u!114 &7862878937145150047
 MonoBehaviour:
