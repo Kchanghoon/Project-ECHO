@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -10,17 +10,17 @@ public class DeathCameraAnimation : MonoBehaviour
     [SerializeField] private AnimationCurve shakeCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
 
     [Header("Screen Fade")]
-    [SerializeField] private Image fadeImage; // UI CanvasÀÇ °ËÀº ÀÌ¹ÌÁö
+    private Image fadeImage; // Inspectorì—ì„œ í• ë‹¹ ì•ˆ í•¨!
     [SerializeField] private float fadeDuration = 2f;
-    [SerializeField] private Color fadeColor = Color.black;
+    [SerializeField] private Color fadeColor = Color.red;
 
-    [Header("Camera Tilt (¾²·¯Áü È¿°ú)")]
-    [SerializeField] private float fallRotationSpeed = 90f; // ÃÊ´ç È¸Àü °¢µµ
-    [SerializeField] private Vector3 finalRotation = new Vector3(90f, 0f, 15f); // ÃÖÁ¾ Ä«¸Ş¶ó °¢µµ
+    [Header("Camera Tilt")]
+    [SerializeField] private float fallRotationSpeed = 90f;
+    [SerializeField] private Vector3 finalRotation = new Vector3(90f, 0f, 15f);
 
     [Header("Audio")]
-    [SerializeField] private AudioClip deathScream; // ÇÃ·¹ÀÌ¾î ºñ¸í
-    [SerializeField] private AudioClip hunterAttackSound; // ÇåÅÍ °ø°İ ¼Ò¸®
+    [SerializeField] private AudioClip deathScream;
+    [SerializeField] private AudioClip hunterAttackSound;
 
     private Transform cameraTransform;
     private AudioSource audioSource;
@@ -29,7 +29,6 @@ public class DeathCameraAnimation : MonoBehaviour
 
     void Start()
     {
-        // Ä«¸Ş¶ó Ã£±â
         Camera mainCam = GetComponentInChildren<Camera>();
         if (mainCam != null)
         {
@@ -43,19 +42,47 @@ public class DeathCameraAnimation : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
-        // Fade ÀÌ¹ÌÁö ÃÊ±â ¼³Á¤
-        if (fadeImage != null)
+        // âœ… Sceneì—ì„œ DeathFadeImage ì°¾ê¸°
+        FindFadeImage();
+    }
+
+    private void FindFadeImage()
+    {
+        Debug.Log("[DeathCameraAnimation] DeathFadeImage ì°¾ê¸° ì‹œì‘...");
+
+        // âœ… Tagë¡œ ì°¾ê¸° (O(1) ìˆ˜ì¤€ìœ¼ë¡œ ë¹ ë¦„)
+        GameObject fadeImageObj = GameObject.FindGameObjectWithTag("DeathFadeImage");
+
+        if (fadeImageObj != null)
         {
-            Color c = fadeColor;
-            c.a = 0f;
-            fadeImage.color = c;
-            fadeImage.gameObject.SetActive(false);
+            fadeImage = fadeImageObj.GetComponent<Image>();
+            Debug.Log("[DeathCameraAnimation] DeathFadeImageë¥¼ Tagë¡œ ì°¾ì•˜ìŠµë‹ˆë‹¤!");
         }
+        else
+        {
+            Debug.LogError("[DeathCameraAnimation] Tag 'DeathFadeImage'ë¥¼ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
+            return;
+        }
+
+        // ì´ˆê¸° ì„¤ì •
+        Color c = fadeColor;
+        c.a = 0f;
+        fadeImage.color = c;
+        fadeImage.gameObject.SetActive(false);
+
+        Debug.Log("[DeathCameraAnimation] DeathFadeImage ì´ˆê¸°í™” ì™„ë£Œ");
     }
 
     public void PlayDeathAnimation()
     {
         if (isPlaying) return;
+
+        if (fadeImage == null)
+        {
+            Debug.LogError("[DeathCameraAnimation] fadeImageê°€ nullì…ë‹ˆë‹¤! ì‚¬ë§ ì—°ì¶œ ì‹¤í–‰ ë¶ˆê°€.");
+            return;
+        }
+
         isPlaying = true;
 
         StartCoroutine(DeathSequence());
@@ -63,28 +90,24 @@ public class DeathCameraAnimation : MonoBehaviour
 
     private IEnumerator DeathSequence()
     {
-        // 1. ÇåÅÍ °ø°İ ¼Ò¸®
         if (hunterAttackSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(hunterAttackSound);
         }
 
-        // 2. Ä«¸Ş¶ó Èçµé¸² + È¸Àü (¾²·¯Áö´Â ´À³¦)
         StartCoroutine(CameraShake());
         StartCoroutine(CameraFall());
 
-        // 3. ÇÃ·¹ÀÌ¾î ºñ¸í (¾à°£ µô·¹ÀÌ)
         yield return new WaitForSeconds(0.3f);
         if (deathScream != null && audioSource != null)
         {
             audioSource.PlayOneShot(deathScream);
         }
 
-        // 4. È­¸é ¼­¼­È÷ ¾îµÓ°Ô
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(FadeToBlack());
 
-        Debug.Log("[DeathCameraAnimation] »ç¸Á ¿¬Ãâ ¿Ï·á");
+        Debug.Log("[DeathCameraAnimation] ì‚¬ë§ ì—°ì¶œ ì™„ë£Œ");
     }
 
     private IEnumerator CameraShake()
@@ -98,7 +121,6 @@ public class DeathCameraAnimation : MonoBehaviour
             elapsed += Time.deltaTime;
             float strength = shakeCurve.Evaluate(elapsed / shakeDuration) * shakeIntensity;
 
-            // ·£´ı Èçµé¸²
             Vector3 randomOffset = new Vector3(
                 Random.Range(-1f, 1f),
                 Random.Range(-1f, 1f),
@@ -110,7 +132,6 @@ public class DeathCameraAnimation : MonoBehaviour
             yield return null;
         }
 
-        // ¿ø·¡ À§Ä¡·Î
         cameraTransform.localPosition = Vector3.zero;
     }
 
@@ -126,7 +147,6 @@ public class DeathCameraAnimation : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / fadeDuration;
 
-            // ºÎµå·´°Ô È¸Àü (¾²·¯Áö´Â È¿°ú)
             cameraTransform.localEulerAngles = Vector3.Lerp(startRotation, finalRotation, t);
 
             yield return null;
@@ -137,7 +157,11 @@ public class DeathCameraAnimation : MonoBehaviour
 
     private IEnumerator FadeToBlack()
     {
-        if (fadeImage == null) yield break;
+        if (fadeImage == null)
+        {
+            Debug.LogError("[DeathCameraAnimation] fadeImage null - FadeToBlack ì‹¤í–‰ ë¶ˆê°€");
+            yield break;
+        }
 
         fadeImage.gameObject.SetActive(true);
 
@@ -146,6 +170,8 @@ public class DeathCameraAnimation : MonoBehaviour
         startColor.a = 0f;
         Color endColor = fadeColor;
         endColor.a = 1f;
+
+        Debug.Log("[DeathCameraAnimation] Fade ì‹œì‘");
 
         while (elapsed < fadeDuration)
         {
@@ -158,5 +184,6 @@ public class DeathCameraAnimation : MonoBehaviour
         }
 
         fadeImage.color = endColor;
+        Debug.Log("[DeathCameraAnimation] Fade ì™„ë£Œ");
     }
 }

@@ -596,11 +596,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fadeImage: {fileID: 3006394877573307281, guid: 8fb4f3ec336c15a41aeeeeb704366712, type: 3}
   fadeDuration: 2
-  fadeColor: {r: 0, g: 0, b: 0, a: 1}
+  fadeColor: {r: 1, g: 1, b: 1, a: 1}
   fallRotationSpeed: 90
-  finalRotation: {x: 90, y: 0, z: 15}
+  finalRotation: {x: 45, y: 0, z: 15}
   deathScream: {fileID: 0}
   hunterAttackSound: {fileID: 0}
 --- !u!4 &4339348627803264028 stripped
