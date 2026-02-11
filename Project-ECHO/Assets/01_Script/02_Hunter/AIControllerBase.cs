@@ -53,8 +53,12 @@ public abstract class AIControllerBase : MonoBehaviourPun, IPunObservable
             enabled = false;
             return;
         }
-
+        if (GetComponent<HunterKillZone>() == null)
+        {
+            gameObject.AddComponent<HunterKillZone>();
+        }
         InitializeAI();
+
     }
 
     protected virtual void Update()

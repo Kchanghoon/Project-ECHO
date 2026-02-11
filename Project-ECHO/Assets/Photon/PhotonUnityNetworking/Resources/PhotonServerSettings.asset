@@ -54,6 +54,8 @@ MonoBehaviour:
   - SetPhase2RPC
   - PlayAttackAnimationRPC
   - SyncFlashlightState
+  - NotifyDeath
+  - TriggerDeath
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

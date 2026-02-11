@@ -708,6 +708,7 @@ GameObject:
   - component: {fileID: -6698634256794112174}
   - component: {fileID: 3426812039467893708}
   - component: {fileID: 7862878937145150047}
+  - component: {fileID: -8367482350300463059}
   m_Layer: 0
   m_Name: SeeHunter
   m_TagString: Untagged
@@ -936,6 +937,24 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
+--- !u!114 &-8367482350300463059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3595625012628118935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df7bdfe4d659a7f4eb4e1e86a5c441a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HunterKillZone
+  killRadius: 1.5
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  killSound: {fileID: 0}
+  killEffect: {fileID: 0}
 --- !u!1 &3994217530261323971
 GameObject:
   m_ObjectHideFlags: 0

@@ -273,6 +273,10 @@ PrefabInstance:
       value: Character
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
@@ -322,6 +326,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4951133490751305334}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6802594423603616298}
   m_SourcePrefab: {fileID: 100100000, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
 --- !u!4 &2614513095366304342 stripped
 Transform:
@@ -534,6 +541,20 @@ MonoBehaviour:
   toggleOnSound: {fileID: 0}
   toggleOffSound: {fileID: 0}
   lowBatterySound: {fileID: 0}
+--- !u!114 &-6802594423603616298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3995720064970690214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a29e1cc4fdb5ae4dbb5dcbe64acd368, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  respawnDelay: 3
+  deathSceneName: 01_Lobby
 --- !u!4 &4339348627803264028 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 639b6ce73b347e5429ac0526c9c29094, type: 3}
