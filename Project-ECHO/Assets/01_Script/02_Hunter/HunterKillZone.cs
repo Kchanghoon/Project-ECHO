@@ -49,7 +49,7 @@ public class HunterKillZone : MonoBehaviourPun
                     Debug.Log($"[HunterKillZone] {playerView.Owner.NickName} 처치!");
 
                     // 해당 플레이어에게 사망 RPC 전송
-                    playerView.RPC("TriggerDeath", RpcTarget.All);
+                    playerView.RPC("TakeDamageRPC", RpcTarget.All);
 
                     // 효과음/이펙트
                     PlayKillEffects();

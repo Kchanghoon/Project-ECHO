@@ -95,6 +95,28 @@ public class PlayerHealth : MonoBehaviourPun
         Debug.Log("[PlayerHealth] 플레이어 사망 동기화 완료");
     }
 
+    [PunRPC]
+    public void TakeDamageRPC()
+    {
+        if (isDead) return;
+
+        // 자신의 캐릭터일 때만 Die() 호출
+        if (photonView.IsMine)
+        {
+            Die();
+        }
+        else
+        {
+            // 다른 플레이어는 사망 상태만 동기화
+            isDead = true;
+
+            if (animationController != null)
+            {
+                animationController.TriggerDeath();
+            }
+        }
+    }
+
     private void HandleLocalPlayerDeath()
     {
         // 컨트롤러 비활성화
