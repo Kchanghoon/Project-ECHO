@@ -421,7 +421,7 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
+  Synchronization: 1
   OwnershipTransfer: 0
   observableSearch: 1
   ObservedComponents:
@@ -556,8 +556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a29e1cc4fdb5ae4dbb5dcbe64acd368, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  respawnDelay: 3
-  deathSceneName: 01_Lobby
+  isOneHitKill: 1
 --- !u!114 &5076439710069063160
 MonoBehaviour:
   m_ObjectHideFlags: 0

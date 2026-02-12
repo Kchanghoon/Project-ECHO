@@ -56,6 +56,15 @@ MonoBehaviour:
   - SyncFlashlightState
   - NotifyDeath
   - TriggerDeath
+  - EndGameRPC
+  - PlayCollectEffectRPC
+  - PlayerEscapedRPC
+  - ShowEscapeZoneRPC
+  - SyncGameStartRPC
+  - SyncPlayerDeathRPC
+  - SyncTimeRPC
+  - NotifyMasterOfDeathRPC
+  - OnPlayerDiedRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
