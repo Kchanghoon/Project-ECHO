@@ -1,12 +1,13 @@
 using Photon.Pun;
 using UnityEngine;
+using DG.Tweening;
 
 public class Coin : MonoBehaviourPun
 {
     [Header("Visual Settings")]
-    [SerializeField] private float rotationSpeed = 100f;
-    [SerializeField] private float bobSpeed = 2f;
-    [SerializeField] private float bobHeight = 0.2f;
+    [SerializeField] private float rotationDuration = 3f; // 한 바퀴 도는데 걸리는 시간
+    [SerializeField] private float bobDuration = 2f; // 위아래 움직임 주기
+    [SerializeField] private float bobHeight = 0.2f; // 위아래 움직임 높이
 
     [Header("Effects")]
     [SerializeField] private ParticleSystem collectParticles;
@@ -18,6 +19,7 @@ public class Coin : MonoBehaviourPun
 
     private Vector3 startPosition;
     private AudioSource audioSource;
+    private Sequence coinSequence;
 
     private void Start()
     {
@@ -41,16 +43,33 @@ public class Coin : MonoBehaviourPun
             coinLight.intensity = 2f;
             coinLight.color = glowColor;
         }
+
+        // DOTween 애니메이션 시작
+        StartCoinAnimation();
     }
 
-    private void Update()
+    private void StartCoinAnimation()
     {
-        // 회전 애니메이션
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        // Sequence 생성
+        coinSequence = DOTween.Sequence();
 
-        // 상하 움직임 (선택사항)
-        float newY = startPosition.y + Mathf.Sin(Time.time * bobSpeed) * bobHeight;
-        transform.position = new Vector3(startPosition.x, newY, startPosition.z);
+        // 회전 애니메이션 (무한 반복)
+        transform.DORotate(new Vector3(0, 360, 0), rotationDuration, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear)
+            .SetLoops(-1, LoopType.Restart);
+
+        // 상하 움직임 애니메이션 (무한 반복)
+        transform.DOLocalMoveY(startPosition.y + bobHeight, bobDuration)
+            .SetEase(Ease.InOutSine)
+            .SetLoops(-1, LoopType.Yoyo);
+
+        // Light 펄스 효과 (선택사항)
+        if (coinLight != null)
+        {
+            coinLight.DOIntensity(3f, 1f)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -75,8 +94,8 @@ public class Coin : MonoBehaviourPun
                 // 수집 효과 재생 (RPC)
                 photonView.RPC("PlayCollectEffectRPC", RpcTarget.All);
 
-                // 0.5초 후 코인 제거 (효과가 재생될 시간)
-                Invoke(nameof(DestroyCoin), 0.5f);
+                // 코인 제거 (수집 애니메이션 후)
+                photonView.RPC("CollectAnimationRPC", RpcTarget.All);
             }
         }
     }
@@ -95,27 +114,38 @@ public class Coin : MonoBehaviourPun
         {
             audioSource.PlayOneShot(collectSound);
         }
-
-        // 메시 숨기기 (파티클만 보이도록)
-        MeshRenderer renderer = GetComponent<MeshRenderer>();
-        if (renderer != null)
-        {
-            renderer.enabled = false;
-        }
-
-        // 콜라이더 비활성화
-        Collider collider = GetComponent<Collider>();
-        if (collider != null)
-        {
-            collider.enabled = false;
-        }
     }
 
-    private void DestroyCoin()
+    [PunRPC]
+    private void CollectAnimationRPC()
     {
-        if (PhotonNetwork.IsMasterClient)
+        // 기존 애니메이션 중지
+        DOTween.Kill(transform);
+
+        // 수집 애니메이션: 위로 튀어오르면서 회전하며 작아짐
+        Sequence collectSeq = DOTween.Sequence();
+
+        collectSeq.Append(transform.DOJump(transform.position + Vector3.up * 0.5f, 1f, 1, 0.3f));
+        collectSeq.Join(transform.DOScale(0f, 0.3f).SetEase(Ease.InBack));
+        collectSeq.Join(transform.DORotate(new Vector3(0, 720, 0), 0.3f, RotateMode.FastBeyond360));
+
+        // 애니메이션 완료 후 제거
+        collectSeq.OnComplete(() =>
         {
-            PhotonNetwork.Destroy(gameObject);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
+        });
+    }
+
+    private void OnDestroy()
+    {
+        // DOTween 정리
+        DOTween.Kill(transform);
+        if (coinLight != null)
+        {
+            DOTween.Kill(coinLight);
         }
     }
 }
