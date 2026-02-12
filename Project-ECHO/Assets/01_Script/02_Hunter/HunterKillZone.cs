@@ -39,7 +39,7 @@ public class HunterKillZone : MonoBehaviourPun
         {
             PlayerHealth playerHealth = col.GetComponent<PlayerHealth>();
 
-            if (playerHealth != null && !playerHealth.IsDead)
+            if (playerHealth != null && !playerHealth.IsDead())
             {
                 // 플레이어 즉사
                 PhotonView playerView = col.GetComponent<PhotonView>();

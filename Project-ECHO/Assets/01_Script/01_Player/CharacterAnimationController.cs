@@ -13,6 +13,7 @@ public class CharacterAnimationController : MonoBehaviourPun
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
     private static readonly int IsRunningHash = Animator.StringToHash("IsRunning");
     private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
+    private static readonly int IsDeadHash = Animator.StringToHash("IsDead");
 
     void Start()
     {
@@ -82,5 +83,16 @@ public class CharacterAnimationController : MonoBehaviourPun
             animator.SetFloat(SpeedHash, speed);
             animator.SetBool(IsRunningHash, isRunning);
         }
+    }
+
+    public void TriggerDeath()
+    {
+        if (animator == null) return;
+
+        animator.SetBool(IsDeadHash, true);
+        animator.SetFloat(SpeedHash, 0f);
+        animator.SetBool(IsRunningHash, false);
+
+        Debug.Log("[CharacterAnimationController] 사망 애니메이션 트리거");
     }
 }
