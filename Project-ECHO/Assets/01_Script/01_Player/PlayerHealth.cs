@@ -1,16 +1,15 @@
-using Photon.Pun;
+ï»¿using Photon.Pun;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerHealth : MonoBehaviourPun
 {
     [Header("Health Settings")]
-    [SerializeField] private bool isOneHitKill = true; // ÇÑ ¹æ¿¡ Á×À½
+    [SerializeField] private bool isOneHitKill = true;
     private bool isDead = false;
 
-    [Header("Death Animation")]
-    private DeathCameraAnimation deathAnimation;
-
     [Header("References")]
+    private DeathCameraAnimation deathAnimation;
     private PlayerController playerController;
     private PlayerCameraController cameraController;
     private CharacterAnimationController animationController;
@@ -25,70 +24,57 @@ public class PlayerHealth : MonoBehaviourPun
         flashlightController = GetComponent<FlashlightController>();
 
         if (deathAnimation == null)
-        {
-            Debug.LogError("[PlayerHealth] DeathCameraAnimation ÄÄÆ÷³ÍÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
-        }
+            Debug.LogError("[PlayerHealth] DeathCameraAnimation ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
     }
 
+    // =========================================================
+    // ë°ë¯¸ì§€ ì²˜ë¦¬
+    // =========================================================
     public void TakeDamage()
     {
-        if (isDead) return;
-        if (!photonView.IsMine) return;
+        if (isDead || !photonView.IsMine) return;
 
-        // ¿ø¼¦ µ¥½º ½Ã½ºÅÛ
-        if (isOneHitKill)
-        {
-            Die();
-        }
+        if (isOneHitKill) Die();
     }
 
+    public void OnHunterKill()
+    {
+        if (photonView.IsMine) TakeDamage();
+    }
+
+    // =========================================================
+    // ì‚¬ë§ ì²˜ë¦¬
+    // =========================================================
     private void Die()
     {
         if (isDead) return;
-
         isDead = true;
 
-        Debug.Log($"[PlayerHealth] ÇÃ·¹ÀÌ¾î {PhotonNetwork.LocalPlayer.ActorNumber} »ç¸Á!");
+        Debug.Log($"[PlayerHealth] í”Œë ˆì´ì–´ {PhotonNetwork.LocalPlayer.ActorNumber} ì‚¬ë§!");
 
-        // ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡ »ç¸Á µ¿±âÈ­
-        photonView.RPC("OnPlayerDiedRPC", RpcTarget.All);
+        // âœ… AllViaServer: ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ê°€ ë™ì¼í•œ ìˆœì„œë¡œ RPC ìˆ˜ì‹  (ìˆœì„œ ë³´ì¥)
+        photonView.RPC(nameof(OnPlayerDiedRPC), RpcTarget.AllViaServer);
 
-        // GameManager¿¡ »ç¸Á ¾Ë¸² (È£½ºÆ®¿¡°Ô¸¸)
-        if (PhotonNetwork.IsMasterClient && GameManager.Instance != null)
-        {
-            GameManager.Instance.RegisterPlayerDeath(PhotonNetwork.LocalPlayer.ActorNumber);
-        }
-        else
-        {
-            // Å¬¶óÀÌ¾ğÆ®ÀÎ °æ¿ì È£½ºÆ®¿¡°Ô »ç¸Á ¾Ë¸²
-            photonView.RPC("NotifyMasterOfDeathRPC", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber);
-        }
+        // âœ… MasterClientì—ê²Œë§Œ ì‚¬ë§ ì•Œë¦¼ (ì´ì¤‘ í˜¸ì¶œ ë°©ì§€)
+        photonView.RPC(nameof(NotifyMasterOfDeathRPC), RpcTarget.MasterClient,
+                       PhotonNetwork.LocalPlayer.ActorNumber);
 
-        // ·ÎÄÃ ÇÃ·¹ÀÌ¾î¸¸ Ã³¸®
-        if (photonView.IsMine)
-        {
-            HandleLocalPlayerDeath();
-        }
+        HandleLocalPlayerDeath();
     }
 
     [PunRPC]
     private void NotifyMasterOfDeathRPC(int actorNumber)
     {
-        if (PhotonNetwork.IsMasterClient && GameManager.Instance != null)
-        {
-            GameManager.Instance.RegisterPlayerDeath(actorNumber);
-        }
+        // âœ… ë°©ì–´ ì½”ë“œ: MasterClient ì—¬ë¶€ë¥¼ RPC ë‚´ë¶€ì—ì„œë„ ì¬í™•ì¸
+        if (!PhotonNetwork.IsMasterClient) return;
+        GameManager.Instance?.RegisterPlayerDeath(actorNumber);
     }
 
     [PunRPC]
     private void OnPlayerDiedRPC()
     {
         isDead = true;
-
-        // Á×Àº ÇÃ·¹ÀÌ¾î´Â ¸ó½ºÅÍ°¡ °¨Áö ¸øÇÏ´Â ·¹ÀÌ¾î·Î º¯°æ
-        gameObject.layer = LayerMask.NameToLayer("DeadPlayer"); // »õ ·¹ÀÌ¾î Ãß°¡
-                                                                // ¶Ç´Â Ignore Raycast ·¹ÀÌ¾î »ç¿ë
-                                                                // gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
 
         if (animationController != null)
             animationController.TriggerDeath();
@@ -99,97 +85,65 @@ public class PlayerHealth : MonoBehaviourPun
     {
         if (isDead) return;
 
-        // ÀÚ½ÅÀÇ Ä³¸¯ÅÍÀÏ ¶§¸¸ Die() È£Ãâ
-        if (photonView.IsMine)
-        {
-            Die();
-        }
+        if (photonView.IsMine) Die();
         else
         {
-            // ´Ù¸¥ ÇÃ·¹ÀÌ¾î´Â »ç¸Á »óÅÂ¸¸ µ¿±âÈ­
             isDead = true;
-
-            if (animationController != null)
-            {
-                animationController.TriggerDeath();
-            }
+            animationController?.TriggerDeath();
         }
     }
 
+    // =========================================================
+    // ë¡œì»¬ í”Œë ˆì´ì–´ ì‚¬ë§ ì—°ì¶œ
+    // =========================================================
     private void HandleLocalPlayerDeath()
     {
-        // ÄÁÆ®·Ñ·¯ ºñÈ°¼ºÈ­
-        if (playerController != null)
-        {
-            playerController.enabled = false;
-        }
+        if (playerController != null) playerController.enabled = false;
+        if (cameraController != null) cameraController.enabled = false;
+        if (flashlightController != null) flashlightController.enabled = false;
 
-        // Ä«¸Ş¶ó ÄÁÆ®·Ñ·¯ ºñÈ°¼ºÈ­
-        if (cameraController != null)
-        {
-            cameraController.enabled = false;
-        }
+        deathAnimation?.PlayDeathAnimation();
 
-        // ¼ÕÀüµî ²ô±â
-        if (flashlightController != null)
-        {
-            flashlightController.enabled = false;
-        }
+        // âœ… Invoke ëŒ€ì‹  Coroutine ì‚¬ìš© (ì”¬ ì „í™˜/ì˜¤ë¸Œì íŠ¸ íŒŒê´´ ì‹œ ì•ˆì „)
+        StartCoroutine(EnableSpectatorModeAfterDelay(2f));
+    }
 
-        // »ç¸Á ¿¬Ãâ Àç»ı
-        if (deathAnimation != null)
-        {
-            deathAnimation.PlayDeathAnimation();
-        }
+    private IEnumerator EnableSpectatorModeAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
 
-        // 2ÃÊ ÈÄ °üÀü ¸ğµå·Î ÀüÈ¯
-        Invoke(nameof(EnableSpectatorMode), 2f);
+        // âœ… ì˜¤ë¸Œì íŠ¸ê°€ ì´ë¯¸ íŒŒê´´ëœ ê²½ìš° ë°©ì–´
+        if (this == null || gameObject == null) yield break;
+
+        EnableSpectatorMode();
     }
 
     private void EnableSpectatorMode()
     {
-        // SpectatorCamera Ã£±â ¶Ç´Â »ı¼º
         SpectatorCamera spectatorCam = FindFirstObjectByType<SpectatorCamera>();
 
         if (spectatorCam == null)
         {
-            // °üÀü Ä«¸Ş¶ó°¡ ¾øÀ¸¸é »ı¼º
-            GameObject spectatorObj = new GameObject("SpectatorCamera");
-            spectatorCam = spectatorObj.AddComponent<SpectatorCamera>();
-            spectatorObj.AddComponent<AudioListener>(); // AudioListener Ãß°¡
+            GameObject obj = new GameObject("SpectatorCamera");
+            spectatorCam = obj.AddComponent<SpectatorCamera>();
+            obj.AddComponent<AudioListener>();
         }
 
-        // ÇÃ·¹ÀÌ¾îÀÇ Ä«¸Ş¶ó ºñÈ°¼ºÈ­
+        // ê¸°ì¡´ í”Œë ˆì´ì–´ ì¹´ë©”ë¼ ë¹„í™œì„±í™”
         Camera playerCamera = GetComponentInChildren<Camera>();
         if (playerCamera != null)
         {
             playerCamera.enabled = false;
-
-            // AudioListenerµµ ºñÈ°¼ºÈ­
-            AudioListener audioListener = playerCamera.GetComponent<AudioListener>();
-            if (audioListener != null)
-            {
-                audioListener.enabled = false;
-            }
+            AudioListener al = playerCamera.GetComponent<AudioListener>();
+            if (al != null) al.enabled = false;
         }
 
-        // °üÀü ¸ğµå È°¼ºÈ­
         spectatorCam.EnableSpectatorMode();
-
-        Debug.Log("[PlayerHealth] °üÀü ¸ğµå È°¼ºÈ­µÊ");
+        Debug.Log("[PlayerHealth] ê´€ì „ ëª¨ë“œ í™œì„±í™”ë¨");
     }
 
-    public bool IsDead()
-    {
-        return isDead;
-    }
-
-    // HunterKillZone¿¡¼­ È£Ãâ
-    public void OnHunterKill()
-    {
-        if (photonView.IsMine)
-        {
-            TakeDamage();
-        }
-    }
+    // =========================================================
+    // ìœ í‹¸
+    // =========================================================
+    public bool IsDead() => isDead;
 }

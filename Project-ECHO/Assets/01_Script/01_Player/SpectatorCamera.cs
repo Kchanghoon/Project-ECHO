@@ -1,20 +1,30 @@
-using Photon.Pun;
+ï»¿using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using System.Linq;
 
 public class SpectatorCamera : MonoBehaviourPun
 {
     [Header("Spectator Settings")]
-    [SerializeField] private float smoothSpeed = 5f;
-    [SerializeField] private Vector3 cameraOffset = new Vector3(0, 2, -5);
+    [SerializeField] private float smoothSpeed = 8f;
     [SerializeField] private float switchCooldown = 0.5f;
+
+    [Header("Camera Rotation")]
+    [SerializeField] private float rotationSpeed = 120f;   // deg/sec
+    [SerializeField] private float cameraDistance = 5f;
+    [SerializeField] private float cameraHeight = 2f;
+    [SerializeField] private float minPitch = -20f;
+    [SerializeField] private float maxPitch = 60f;
+
+    [Header("Collision")]
+    [SerializeField] private LayerMask collisionMask;
+    [SerializeField] private float collisionRadius = 0.3f;
 
     [Header("UI")]
     [SerializeField] private GameObject spectatorUI;
     [SerializeField] private TMPro.TextMeshProUGUI spectatorText;
 
+    // --- ìƒíƒœ ---
     private bool isSpectating = false;
     private List<GameObject> alivePlayers = new List<GameObject>();
     private int currentTargetIndex = 0;
@@ -22,44 +32,46 @@ public class SpectatorCamera : MonoBehaviourPun
     private Camera spectatorCam;
     private Transform currentTarget;
 
+    // --- ì¹´ë©”ë¼ íšŒì „ ---
+    private float _yaw = 0f;
+    private float _pitch = 15f;
+
+    // =========================================================
+    // ì´ˆê¸°í™”
+    // =========================================================
     private void Start()
     {
         spectatorCam = GetComponent<Camera>();
-
         if (spectatorCam == null)
-        {
             spectatorCam = gameObject.AddComponent<Camera>();
-        }
 
-        // ÃÊ±â¿¡´Â ºñÈ°¼ºÈ­
         spectatorCam.enabled = false;
 
         if (spectatorUI != null)
-        {
             spectatorUI.SetActive(false);
-        }
     }
 
+    // =========================================================
+    // í™œì„±í™” / ë¹„í™œì„±í™”
+    // =========================================================
     public void EnableSpectatorMode()
     {
         isSpectating = true;
         spectatorCam.enabled = true;
 
         if (spectatorUI != null)
-        {
             spectatorUI.SetActive(true);
-        }
 
-        // »ıÁ¸ÇÑ ÇÃ·¹ÀÌ¾î ¸ñ·Ï °»½Å
+        // ë§ˆìš°ìŠ¤ ì ê¸ˆ
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         UpdateAlivePlayersList();
 
-        // Ã¹ ¹øÂ° Å¸°Ù ¼³Á¤
         if (alivePlayers.Count > 0)
-        {
             SwitchToPlayer(0);
-        }
 
-        Debug.Log("[SpectatorCamera] °üÀü ¸ğµå È°¼ºÈ­");
+        Debug.Log("[SpectatorCamera] ê´€ì „ ëª¨ë“œ í™œì„±í™”");
     }
 
     public void DisableSpectatorMode()
@@ -68,110 +80,146 @@ public class SpectatorCamera : MonoBehaviourPun
         spectatorCam.enabled = false;
 
         if (spectatorUI != null)
-        {
             spectatorUI.SetActive(false);
-        }
 
-        Debug.Log("[SpectatorCamera] °üÀü ¸ğµå ºñÈ°¼ºÈ­");
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        Debug.Log("[SpectatorCamera] ê´€ì „ ëª¨ë“œ ë¹„í™œì„±í™”");
     }
 
+    // =========================================================
+    // ë§¤ í”„ë ˆì„
+    // =========================================================
     private void Update()
     {
         if (!isSpectating) return;
 
-        // »ıÁ¸ÀÚ ¸ñ·Ï ÁÖ±âÀûÀ¸·Î °»½Å (2ÃÊ¸¶´Ù)
+        // ìƒì¡´ì ëª©ë¡ ê°±ì‹  (2ì´ˆë§ˆë‹¤)
         if (Time.frameCount % 120 == 0)
-        {
             UpdateAlivePlayersList();
-        }
 
-        // Å¸°Ù ÀüÈ¯ ÀÔ·Â (¸¶¿ì½º ½ºÅ©·Ñ ¶Ç´Â È­»ìÇ¥ Å°)
-        if (Time.time - lastSwitchTime > switchCooldown)
-        {
-            if (Mouse.current != null && Mouse.current.scroll.ReadValue().y > 0)
-            {
-                SwitchToNextPlayer();
-                lastSwitchTime = Time.time;
-            }
-            else if (Mouse.current != null && Mouse.current.scroll.ReadValue().y < 0)
-            {
-                SwitchToPreviousPlayer();
-                lastSwitchTime = Time.time;
-            }
-
-            // Å°º¸µå ÀÔ·Â
-            if (Keyboard.current != null)
-            {
-                if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
-                {
-                    SwitchToNextPlayer();
-                    lastSwitchTime = Time.time;
-                }
-                else if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
-                {
-                    SwitchToPreviousPlayer();
-                    lastSwitchTime = Time.time;
-                }
-            }
-        }
-
-        // Ä«¸Ş¶ó À§Ä¡ ¾÷µ¥ÀÌÆ®
+        HandleSwitchInput();
+        HandleMouseRotation();   // âœ… ì‹ ê·œ
         UpdateCameraPosition();
     }
 
+    // =========================================================
+    // âœ… ë§ˆìš°ìŠ¤ íšŒì „ (ì‹ ê·œ)
+    // =========================================================
+    private void HandleMouseRotation()
+    {
+        if (Mouse.current == null) return;
+
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+        _yaw += mouseDelta.x * rotationSpeed * Time.deltaTime;
+        _pitch -= mouseDelta.y * rotationSpeed * Time.deltaTime;
+        _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
+    }
+
+    // =========================================================
+    // ì¹´ë©”ë¼ ìœ„ì¹˜ ê³„ì‚° (íšŒì „ ë°˜ì˜ + ì¶©ëŒ ì²˜ë¦¬)
+    // =========================================================
+    private void UpdateCameraPosition()
+    {
+        if (currentTarget == null) return;
+
+        // íšŒì „ê°’ìœ¼ë¡œ ì˜¤í”„ì…‹ ê³„ì‚°
+        Quaternion rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+        Vector3 desiredOffset = rotation * new Vector3(0f, cameraHeight, -cameraDistance);
+        Vector3 desiredPos = currentTarget.position + desiredOffset;
+
+        // ë²½ ì¶©ëŒ ë°©ì§€ (SphereCast)
+        Vector3 origin = currentTarget.position + Vector3.up * cameraHeight;
+        Vector3 direction = desiredPos - origin;
+
+        if (Physics.SphereCast(origin, collisionRadius, direction.normalized,
+                               out RaycastHit hit, direction.magnitude, collisionMask))
+        {
+            desiredPos = origin + direction.normalized * (hit.distance - collisionRadius);
+        }
+
+        // ë¶€ë“œëŸ½ê²Œ ì´ë™
+        transform.position = Vector3.Lerp(transform.position, desiredPos,
+                                          Time.deltaTime * smoothSpeed);
+
+        // íƒ€ê²Ÿ ë°”ë¼ë³´ê¸°
+        Vector3 lookTarget = currentTarget.position + Vector3.up * 1.5f;
+        Quaternion lookRot = Quaternion.LookRotation(lookTarget - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot,
+                                                 Time.deltaTime * smoothSpeed);
+    }
+
+    // =========================================================
+    // í”Œë ˆì´ì–´ ì „í™˜ ì…ë ¥
+    // =========================================================
+    private void HandleSwitchInput()
+    {
+        if (Time.time - lastSwitchTime < switchCooldown) return;
+
+        bool next = false;
+        bool prev = false;
+
+        if (Mouse.current != null)
+        {
+            float scroll = Mouse.current.scroll.ReadValue().y;
+            if (scroll > 0f) next = true;
+            else if (scroll < 0f) prev = true;
+        }
+
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.rightArrowKey.wasPressedThisFrame) next = true;
+            if (Keyboard.current.leftArrowKey.wasPressedThisFrame) prev = true;
+        }
+
+        if (next) { SwitchToNextPlayer(); lastSwitchTime = Time.time; }
+        if (prev) { SwitchToPreviousPlayer(); lastSwitchTime = Time.time; }
+    }
+
+    // =========================================================
+    // ìƒì¡´ì ëª©ë¡ ê°±ì‹ 
+    // =========================================================
     private void UpdateAlivePlayersList()
     {
         alivePlayers.Clear();
 
-        // ¾ÀÀÇ ¸ğµç ÇÃ·¹ÀÌ¾î Ã£±â
-        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
-
-        foreach (GameObject player in allPlayers)
+        // âœ… FindGameObjectsWithTag ëŒ€ì‹  PhotonNetwork í™œìš©ìœ¼ë¡œ ì‹ ë¢°ë„ í–¥ìƒ
+        foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
         {
             PhotonView pv = player.GetComponent<PhotonView>();
             PlayerHealth health = player.GetComponent<PlayerHealth>();
 
-            // ÀÚ½ÅÀÌ ¾Æ´Ï°í, »ì¾ÆÀÖ´Â ÇÃ·¹ÀÌ¾î¸¸ Ãß°¡
             if (pv != null && health != null && !health.IsDead() && !pv.IsMine)
-            {
                 alivePlayers.Add(player);
-            }
         }
 
-        Debug.Log($"[SpectatorCamera] °üÀü °¡´ÉÇÑ ÇÃ·¹ÀÌ¾î: {alivePlayers.Count}¸í");
+        Debug.Log($"[SpectatorCamera] ê´€ì „ ê°€ëŠ¥í•œ í”Œë ˆì´ì–´: {alivePlayers.Count}ëª…");
 
-        // ÇöÀç Å¸°ÙÀÌ »ç¶óÁ³À¸¸é ´ÙÀ½ Å¸°ÙÀ¸·Î
         if (currentTarget == null && alivePlayers.Count > 0)
-        {
             SwitchToPlayer(0);
-        }
-        // »ıÁ¸ÀÚ°¡ ¾øÀ¸¸é
         else if (alivePlayers.Count == 0)
         {
             currentTarget = null;
-            UpdateSpectatorUI("°üÀü °¡´ÉÇÑ ÇÃ·¹ÀÌ¾î°¡ ¾ø½À´Ï´Ù.");
+            UpdateSpectatorUI("ê´€ì „ ê°€ëŠ¥í•œ í”Œë ˆì´ì–´ê°€ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
+    // =========================================================
+    // ê´€ì „ ëŒ€ìƒ ì „í™˜
+    // =========================================================
     private void SwitchToNextPlayer()
     {
         if (alivePlayers.Count == 0) return;
-
-        currentTargetIndex = (currentTargetIndex + 1) % alivePlayers.Count;
-        SwitchToPlayer(currentTargetIndex);
+        SwitchToPlayer((currentTargetIndex + 1) % alivePlayers.Count);
     }
 
     private void SwitchToPreviousPlayer()
     {
         if (alivePlayers.Count == 0) return;
-
-        currentTargetIndex--;
-        if (currentTargetIndex < 0)
-        {
-            currentTargetIndex = alivePlayers.Count - 1;
-        }
-
-        SwitchToPlayer(currentTargetIndex);
+        int idx = currentTargetIndex - 1;
+        if (idx < 0) idx = alivePlayers.Count - 1;
+        SwitchToPlayer(idx);
     }
 
     private void SwitchToPlayer(int index)
@@ -181,36 +229,21 @@ public class SpectatorCamera : MonoBehaviourPun
         currentTarget = alivePlayers[index].transform;
         currentTargetIndex = index;
 
-        // ÇÃ·¹ÀÌ¾î ÀÌ¸§ °¡Á®¿À±â
+        // âœ… ì „í™˜ ì‹œ í˜„ì¬ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ yaw ì´ˆê¸°í™” (íŠ€ëŠ” í˜„ìƒ ë°©ì§€)
+        Vector3 dir = transform.position - currentTarget.position;
+        _yaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+        _pitch = 15f;
+
         PhotonView pv = alivePlayers[index].GetComponent<PhotonView>();
-        string playerName = pv != null ? pv.Owner.NickName : "¾Ë ¼ö ¾øÀ½";
+        string name = pv != null ? pv.Owner.NickName : "ì•Œ ìˆ˜ ì—†ìŒ";
 
-        UpdateSpectatorUI($"°üÀü Áß: {playerName} ({currentTargetIndex + 1}/{alivePlayers.Count})");
-
-        Debug.Log($"[SpectatorCamera] °üÀü ´ë»ó ÀüÈ¯: {playerName}");
-    }
-
-    private void UpdateCameraPosition()
-    {
-        if (currentTarget == null) return;
-
-        // ¸ñÇ¥ À§Ä¡ °è»ê
-        Vector3 targetPosition = currentTarget.position + currentTarget.TransformDirection(cameraOffset);
-
-        // ºÎµå·´°Ô ÀÌµ¿
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * smoothSpeed);
-
-        // Å¸°ÙÀ» ¹Ù¶óº¸±â
-        Vector3 lookTarget = currentTarget.position + Vector3.up * 1.5f;
-        Quaternion targetRotation = Quaternion.LookRotation(lookTarget - transform.position);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothSpeed);
+        UpdateSpectatorUI($"ê´€ì „ ì¤‘: {name} ({currentTargetIndex + 1}/{alivePlayers.Count})");
+        Debug.Log($"[SpectatorCamera] ê´€ì „ ëŒ€ìƒ ì „í™˜: {name}");
     }
 
     private void UpdateSpectatorUI(string message)
     {
         if (spectatorText != null)
-        {
-            spectatorText.text = message + "\n¡ç / ¡æ ¶Ç´Â ¸¶¿ì½º ÈÙ·Î ÀüÈ¯";
-        }
+            spectatorText.text = message + "\nâ† / â†’ ë˜ëŠ” ë§ˆìš°ìŠ¤ íœ ë¡œ ì „í™˜";
     }
 }
