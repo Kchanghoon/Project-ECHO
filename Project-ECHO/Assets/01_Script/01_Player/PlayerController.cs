@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     [Header("Camera Settings")]
     [SerializeField] private float standingCameraHeight = 1.6f;
-    [SerializeField] private float crouchingCameraHeight = 0.5f;
+    [SerializeField] private float crouchingCameraHeight = 1.2f;
     [SerializeField] private float cameraTransitionSpeed = 5f;
     private Transform cameraRoot;
     // ✅ 추가: 네트워크 애니메이션 동기화용

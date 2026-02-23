@@ -8,7 +8,7 @@ public class PlayerCameraController : MonoBehaviourPun
     public Transform cameraRoot;
     public float mouseSensitivity = 15f;
     public float upperLookLimit = -80f;
-    public float lowerLookLimit = 80f;
+    public float lowerLookLimit = 35f;
 
     private float xRotation = 0f;
     private Camera playerCamera;
