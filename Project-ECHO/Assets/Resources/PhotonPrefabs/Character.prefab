@@ -365,7 +365,7 @@ MonoBehaviour:
   noiseUpdateInterval: 0.2
   smoothing: 10
   standingCameraHeight: 1.6
-  crouchingCameraHeight: 0.5
+  crouchingCameraHeight: 1.2
   cameraTransitionSpeed: 5
 --- !u!114 &8661603574742121116
 MonoBehaviour:
@@ -382,7 +382,7 @@ MonoBehaviour:
   cameraRoot: {fileID: 5755635162177160472}
   mouseSensitivity: 15
   upperLookLimit: -80
-  lowerLookLimit: 80
+  lowerLookLimit: 35
   headBone: {fileID: 2614513095366304342}
 --- !u!143 &4140768566553274902
 CharacterController:

@@ -67,6 +67,7 @@ MonoBehaviour:
   - OnPlayerDiedRPC
   - CollectAnimationRPC
   - TakeDamageRPC
+  - SyncFlashlightIntensity
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

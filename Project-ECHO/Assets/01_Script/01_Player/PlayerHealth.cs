@@ -83,16 +83,15 @@ public class PlayerHealth : MonoBehaviourPun
     [PunRPC]
     private void OnPlayerDiedRPC()
     {
-        // 모든 클라이언트에서 실행
         isDead = true;
 
-        // 애니메이션 처리
-        if (animationController != null)
-        {
-            animationController.TriggerDeath();
-        }
+        // 죽은 플레이어는 몬스터가 감지 못하는 레이어로 변경
+        gameObject.layer = LayerMask.NameToLayer("DeadPlayer"); // 새 레이어 추가
+                                                                // 또는 Ignore Raycast 레이어 사용
+                                                                // gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
 
-        Debug.Log("[PlayerHealth] 플레이어 사망 동기화 완료");
+        if (animationController != null)
+            animationController.TriggerDeath();
     }
 
     [PunRPC]
